@@ -8,7 +8,7 @@ const swaggerJsDoc = require("swagger-jsdoc");
 const MensRanking = require("./src/models/mensModel");
 
 const app = express();
-const PORT = process.env.PORT | 8000;
+const PORT = process.env.PORT | 3000;
 
 
 
@@ -23,7 +23,7 @@ const options = {
         servers: [
             {
 
-                url: "http://localhost:8000"
+                url: "http://localhost:3000"
             }
         ],
     },

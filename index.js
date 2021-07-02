@@ -23,7 +23,7 @@ const options = {
         servers: [
             {
 
-                url: "https://olympic7api.herokuapp.com/api-docs/"
+                url: "https://olympic7api.herokuapp.com/api-docs/mens"
             }
         ],
     },

@@ -8,7 +8,7 @@ const swaggerJsDoc = require("swagger-jsdoc");
 const MensRanking = require("./src/models/mensModel");
 
 const app = express();
-const PORT = process.env.PORT | 3000;
+const PORT = process.env.PORT || 3000;
 
 
 

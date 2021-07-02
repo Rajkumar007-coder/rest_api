@@ -8,7 +8,7 @@ const swaggerJsDoc = require("swagger-jsdoc");
 const MensRanking = require("./src/models/mensModel");
 
 const app = express();
-const port = process.env.PORT | 8000;
+const PORT = process.env.PORT | 8000;
 
 
 
@@ -42,7 +42,7 @@ app.use(router);
 
 
 
-app.listen(port, () =>
+app.listen(PORT, () =>
 {
-    console.log(`Server running on PORT : ${port}`);
+    console.log(`Server running on PORT : ${PORT}`);
 });

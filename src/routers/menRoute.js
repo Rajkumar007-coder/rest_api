@@ -50,38 +50,7 @@ const MensRanking = require("../models/mensModel");
 *   name: Olympic Player
 *   description: The Olympic Player managing API
 */
-// /**
-// * @swagger
-// * /mens/login:
-// *   post:
-// *     summary: Returns the list of all the Olympic Player
-// *     tags: [Olympic Player]
-// *     responses:
-// *       201:
-// *         description: The list of the Olympic Player
-// *         content:
-// *           application/json:
-// *             schema:
-// *               type: array
-// *               items:
-// *                 $ref: '#/components/schemas/mens'
-// */
 
-// router.post("/mens/login", async (req, res) =>
-// {
-//     const user = {
-//         id: Date.now(),
-//         userEmail: 'raj@gmail.com',
-//         password: '456789'
-//     }
-
-//     jwt.sign({ user }, 'secretkey', (error, token) =>
-//     {
-//         res.json({
-//             token
-//         })
-//     })
-// })
 /**
 * @swagger
 * /mens:
@@ -103,41 +72,17 @@ const MensRanking = require("../models/mensModel");
 
 router.get("/mens", async (req, res) =>
 {
-    // jwt.verify(req.token, 'secretkey', async (error, Data) =>
-    // {
+    try
+    {
+        const getMens = await MensRanking.find({}).sort({ ranking: 1 });
+        res.status(201).send(getMens);
+    } catch (error)
+    {
+        res.status(400).send(error);
+    }
 
-    //     if (error)
-    //     {
-    //         res.sendStatus(403);
-    //     } else
-        // {
-            try
-            {
-                const getMens = await MensRanking.find({}).sort({ ranking: 1 });
-                res.status(201).send(getMens);
-            } catch (error)
-            {
-                res.status(400).send(error);
-            }
-        // }
-    // });
 
 });
-
-// function verifyToken(req, res, next)
-// {
-//     const bearerHeader = req.headers['authorization'];
-//     if (typeof bearerHeader !== 'undefined')
-//     {
-//         const bearer = bearerHeader.split(' ');
-//         const bearerToken = bearer[1];
-//         req.token = bearerToken;
-//         next();
-//     } else
-//     {
-//         res.sendStatus(403);
-//     }
-// }
 
 /**
 * @swagger
@@ -201,27 +146,19 @@ router.get("/mens/:id", async (req, res) =>
 */
 //we will handle post req....
 
-router.post("/mens",  async (req, res) =>
+router.post("/mens", async (req, res) =>
 {
-    // jwt.verify(req.token, 'secretkey', async (error, Data) =>
-    // {
-    //     if (error)
-    //     {
-    //         res.sendStatus(403);
-    //     } else
-    //     {
-            try
-            {
-                const addingMensRecords = await new MensRanking(req.body);
-                console.log(req.body);
-                const insertMens = addingMensRecords.save();
-                res.status(201).send(insertMens);
-            } catch (error)
-            {
-                res.status(500).send(error);
-            }
-    //     }
-    // });
+
+    try
+    {
+        const addingMensRecords = await new MensRanking(req.body);
+        console.log(req.body);
+        const insertMens = addingMensRecords.save();
+        res.status(201).send(insertMens);
+    } catch (error)
+    {
+        res.status(500).send(error);
+    }
 });
 
 /**

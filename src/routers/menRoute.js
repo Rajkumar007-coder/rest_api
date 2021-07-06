@@ -203,13 +203,13 @@ router.get("/mens/:id", async (req, res) =>
 
 router.post("/mens", verifyToken, async (req, res) =>
 {
-    jwt.verify(req.token, 'secretkey', async (error, Data) =>
-    {
-        if (error)
-        {
-            res.sendStatus(403);
-        } else
-        {
+    // jwt.verify(req.token, 'secretkey', async (error, Data) =>
+    // {
+    //     if (error)
+    //     {
+    //         res.sendStatus(403);
+    //     } else
+    //     {
             try
             {
                 const addingMensRecords = await new MensRanking(req.body);
@@ -220,8 +220,8 @@ router.post("/mens", verifyToken, async (req, res) =>
             {
                 res.status(500).send(error);
             }
-        }
-    });
+    //     }
+    // });
 });
 
 /**

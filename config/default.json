@@ -1,5 +1,5 @@
 {
     "port": 3000,    
-    "host":"http://localhost:3000",
+    "host":"https://olympic-api-stage.herokuapp.com/",
     "db":"mongodb+srv://dev-123:dev-123@cluster0.rew9c.mongodb.net/api_dev?retryWrites=true&w=majority"
 }

@@ -15,14 +15,6 @@ const MensRanking = require("./src/models/mensModel");
 const app = express();
 const PORT = process.env.PORT || `${port}`
 
-if (process.env.NODE_ENV == "production")
-{
-    module.exports = ("./config/prod");
-} else
-{
-    module.exports = ("./config/default");
-}
-
 const options = {
     definition: {
         openapi: "3.0.0",

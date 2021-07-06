@@ -13,7 +13,7 @@ require("./src/db/conn");
 const MensRanking = require("./src/models/mensModel");
 
 const app = express();
-const PORT = `${port}`
+const PORT = process.env.PORT || `${port}`
 
 if (process.env.NODE_ENV == "production")
 {

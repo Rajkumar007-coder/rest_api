@@ -1,5 +1,5 @@
 {
     "port":5000,
-    "host":"https://olympic-api-dev.herokuapp.com/",
+    "host":"https://olympic-api-stage.herokuapp.com/",
     "db":"mongodb+srv://stage-123:stage-123@cluster0.2v6jb.mongodb.net/api_stage?retryWrites=true&w=majority"
 }

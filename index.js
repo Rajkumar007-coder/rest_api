@@ -26,8 +26,9 @@ const options = {
         servers: [
             {
 
-                url:`${host}`
-            }
+            url: `${host}`
+              
+          }
         ],
         components: {
             securitySchemes: {

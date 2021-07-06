@@ -50,38 +50,38 @@ const MensRanking = require("../models/mensModel");
 *   name: Olympic Player
 *   description: The Olympic Player managing API
 */
-/**
-* @swagger
-* /mens/login:
-*   post:
-*     summary: Returns the list of all the Olympic Player
-*     tags: [Olympic Player]
-*     responses:
-*       201:
-*         description: The list of the Olympic Player
-*         content:
-*           application/json:
-*             schema:
-*               type: array
-*               items:
-*                 $ref: '#/components/schemas/mens'
-*/
+// /**
+// * @swagger
+// * /mens/login:
+// *   post:
+// *     summary: Returns the list of all the Olympic Player
+// *     tags: [Olympic Player]
+// *     responses:
+// *       201:
+// *         description: The list of the Olympic Player
+// *         content:
+// *           application/json:
+// *             schema:
+// *               type: array
+// *               items:
+// *                 $ref: '#/components/schemas/mens'
+// */
 
-router.post("/mens/login", async (req, res) =>
-{
-    const user = {
-        id: Date.now(),
-        userEmail: 'raj@gmail.com',
-        password: '456789'
-    }
+// router.post("/mens/login", async (req, res) =>
+// {
+//     const user = {
+//         id: Date.now(),
+//         userEmail: 'raj@gmail.com',
+//         password: '456789'
+//     }
 
-    jwt.sign({ user }, 'secretkey', (error, token) =>
-    {
-        res.json({
-            token
-        })
-    })
-})
+//     jwt.sign({ user }, 'secretkey', (error, token) =>
+//     {
+//         res.json({
+//             token
+//         })
+//     })
+// })
 /**
 * @swagger
 * /mens:
@@ -124,20 +124,20 @@ router.get("/mens", async (req, res) =>
 
 });
 
-function verifyToken(req, res, next)
-{
-    const bearerHeader = req.headers['authorization'];
-    if (typeof bearerHeader !== 'undefined')
-    {
-        const bearer = bearerHeader.split(' ');
-        const bearerToken = bearer[1];
-        req.token = bearerToken;
-        next();
-    } else
-    {
-        res.sendStatus(403);
-    }
-}
+// function verifyToken(req, res, next)
+// {
+//     const bearerHeader = req.headers['authorization'];
+//     if (typeof bearerHeader !== 'undefined')
+//     {
+//         const bearer = bearerHeader.split(' ');
+//         const bearerToken = bearer[1];
+//         req.token = bearerToken;
+//         next();
+//     } else
+//     {
+//         res.sendStatus(403);
+//     }
+// }
 
 /**
 * @swagger
@@ -201,7 +201,7 @@ router.get("/mens/:id", async (req, res) =>
 */
 //we will handle post req....
 
-router.post("/mens", verifyToken, async (req, res) =>
+router.post("/mens",  async (req, res) =>
 {
     // jwt.verify(req.token, 'secretkey', async (error, Data) =>
     // {

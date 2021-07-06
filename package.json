@@ -6,6 +6,7 @@
   "scripts": {
     "local": " NODE_ENV=local port=3000 nodemon && index.js",
     "dev": " NODE_ENV=dev port=5000 nodemon && index.js",
+    "start": "nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

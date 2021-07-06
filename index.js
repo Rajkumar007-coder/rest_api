@@ -1,16 +1,27 @@
 const express = require("express");
-require("./src/db/conn");
 const router = require("./src/routers/menRoute");
 const swaggerUI = require("swagger-ui-express");
 const swaggerJsDoc = require("swagger-jsdoc");
+const config = require("config");
+const port = config.get("port");
+const host = config.get("host");
+require("dotenv").config();
+require("./src/db/conn");
+
 
 
 const MensRanking = require("./src/models/mensModel");
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = `${port}`
 
-
+if (process.env.NODE_ENV == "production")
+{
+    module.exports = ("./config/prod");
+} else
+{
+    module.exports = ("./config/default");
+}
 
 const options = {
     definition: {
@@ -23,9 +34,23 @@ const options = {
         servers: [
             {
 
-                url: "https://olympic7api.herokuapp.com"
+                url:`${host}`
             }
         ],
+        components: {
+            securitySchemes: {
+              jwt: {
+                type: "http",
+                scheme: "bearer",
+                in: "header",
+                bearerFormat: "JWT"
+              },
+            }
+          }
+          ,
+          security: [{
+            jwt: []
+          }]
     },
     apis: ["./src/routers/*.js"],
 };
@@ -39,8 +64,13 @@ app.use(express.json());
 
 app.use(router);
 
-
-
+if (process.env.NODE_ENV == 'development')
+{
+  module.exports = ("./config/default");
+} else if (process.env.NODE_ENV == "production")
+{
+  module.exports = ("./config/prod");
+}
 
 app.listen(PORT, () =>
 {

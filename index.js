@@ -11,6 +11,7 @@ require("./src/db/conn");
 
 
 const MensRanking = require("./src/models/mensModel");
+const UserData = require("./src/models/userModel");
 
 const app = express();
 const PORT = process.env.PORT || `${port}`

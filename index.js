@@ -51,9 +51,6 @@ const options = {
 const specs = swaggerJsDoc(options);
 
 app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(specs));
-
-console.log(specs);
-
 app.use(express.json());
 
 app.use(router);

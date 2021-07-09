@@ -5,6 +5,7 @@ const jwt = require("jsonwebtoken");
 
 const MensRanking = require("../models/mensModel");
 const UserData = require("../models/userModel");
+const OtpData = require("../models/otpModel");
 
 
 /**
@@ -14,10 +15,10 @@ const UserData = require("../models/userModel");
  *     AuthSignup:
  *       type: object
  *       required:
- *         - useremail
+ *         - userEmail
  *         - name
  *         - password
- *         - confirmpassword 
+ *         - confirmPassword 
  *     
  *       properties:
  *         useremail:
@@ -33,10 +34,10 @@ const UserData = require("../models/userModel");
  *           type: string
  *           description: The confirmpassword of user
  *       example:
- *         useremail:apitest@gmail.com
- *         name:Christen COLEMAN
- *         password:alfa+number+signs
- *         confirmpassword:alfa+number+signs
+ *         {"userEmail":"example@gmail.com",
+ *         "name":"Your Name",
+ *         "password":"*#*#*#*#*#",
+ *         "confirmPassword":"#*#*#*#*#*"}
  */
 
 /**
@@ -56,8 +57,40 @@ const UserData = require("../models/userModel");
  *           type: string
  *           description: The password of user
  *       example:
- *         useremail:apitest@gmail.com
- *         password:alfa+number+signs
+ *         {"useremail":"example@gmail.com",
+ *         "password":"*#*#*#*#"}
+ */
+
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *    Forgot Password:
+ *       type: object
+ *       required:
+ *         - useremail 
+ *       properties:
+ *         useremail:
+ *           type: string
+ *           description: The email of user
+ *       example:
+ *         {"useremail":"example@gmail.com"}
+ */
+
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *    Reset Password:
+ *       type: object
+ *       required:
+ *         - otp 
+ *       properties:
+ *         otp:
+ *           type: string
+ *           description: The OTP of user
+ *       example:
+ *         {"code":"####","password":"*****","confirmpassword":"*****"}
  */
 
 /**
@@ -150,7 +183,7 @@ router.get("/user", verifyToken, async (req, res) =>
         const verify = jwt.verify(req.token, process.env.SECRET_KEY);
         if (!verify)
         {
-            res.status.json({ error: "Not valide Token" });
+            res.status(401).json({ error: "Not valide Token" });
         } else
         {
             const getUser = await UserData.find({}).sort({ ranking: 1 });
@@ -158,7 +191,7 @@ router.get("/user", verifyToken, async (req, res) =>
         }
     } catch (error)
     {
-        res.status(400).send(error);
+        res.status(500).send(error);
     }
 
 
@@ -166,9 +199,9 @@ router.get("/user", verifyToken, async (req, res) =>
 
 /**
 * @swagger
-* /signin:
+* /signIn:
 *   post:
-*     summary: Create a new Auth for Access
+*     summary: Get JWT Token
 *     tags: [Authentication]
 *     requestBody:
 *       required: true
@@ -178,7 +211,7 @@ router.get("/user", verifyToken, async (req, res) =>
 *             $ref: '#/components/schemas/AuthSignin'
 *     responses:
 *       201:
-*         description: The Player was successfully created
+*         description: The User was successfully created
 *         content:
 *           application/json:
 *             schema:
@@ -196,7 +229,7 @@ router.post("/signin", async (req, res) =>
 
         if (!useremail || !password)
         {
-            return res.status(400).json({ error: "plz filled the field properly" });
+            return res.status(400).json({ error: "please filled the field properly" });
         }
 
         const userLogin = await UserData.findOne({ useremail: useremail });
@@ -216,7 +249,7 @@ router.post("/signin", async (req, res) =>
             }
         } else
         {
-            return res.status(400).json({ error: "Invalid Credientials" });
+            return res.status(401).json({ error: "Invalid Credientials" });
 
         }
 
@@ -228,7 +261,7 @@ router.post("/signin", async (req, res) =>
 
 /**
 * @swagger
-* /signup:
+* /signUp:
 *   post:
 *     summary: Create a new Auth for Access
 *     tags: [Authentication]
@@ -255,7 +288,7 @@ router.post("/signup", async (req, res) =>
 
     if (!useremail || !name || !password || !confirmpassword)
     {
-        return res.status(422).json({ error: "plz filled the field properly" });
+        return res.status(400).json({ error: "please filled the field properly" });
     }
 
     try
@@ -287,6 +320,123 @@ router.post("/signup", async (req, res) =>
     }
 });
 
+/**
+* @swagger
+* /forgotpassword:
+*   post:
+*     summary: Forgot Password
+*     tags: [Authentication]
+*     requestBody:
+*       required: true
+*       content:
+*         application/json:
+*           schema:
+*             $ref: '#/components/schemas/Forgot Password'
+*     responses:
+*       201:
+*         description: The Player was successfully created
+*         content:
+*           application/json:
+*             schema:
+*               $ref: '#/components/schemas/Forgot Password'
+*       500:
+*         description: Some server error
+*/
+
+router.post("/forgotpassword", async (req, res) =>
+{
+    try
+    {
+        const { useremail } = req.body;
+
+        if (!useremail)
+        {
+            return res.status(401).json({ error: "Email is not valid" });
+        }
+
+        const isMatch = await UserData.findOne({ useremail: useremail });
+
+        if (!isMatch)
+        {
+            res.status(401).json({ error: "Email is not Valid" });
+        } else
+        {
+
+            const otpCode = Math.floor((Math.random() * 10000) + 1);
+            res.status(200).json({ OTP: `${otpCode}` });
+
+            const otpData = new OtpData({ useremail, code: otpCode, expireIn: new Date().getTime() + 60 * 1000 });
+            const storeOtpData = await otpData.save();
+
+        }
+
+    } catch (error)
+    {
+        res.status(500).send(error);
+    }
+})
+
+/**
+* @swagger
+* /resetPassword:
+*   post:
+*     summary: Reset Password
+*     tags: [Authentication]
+*     requestBody:
+*       required: true
+*       content:
+*         application/json:
+*           schema:
+*             $ref: '#/components/schemas/Reset Password'
+*     responses:
+*       201:
+*         description: The Player was successfully created
+*         content:
+*           application/json:
+*             schema:
+*               $ref: '#/components/schemas/Reset Password'
+*       500:
+*         description: Some server error
+*/
+router.post("/resetPassword", async (req, res) =>
+{
+    try
+    {
+        const { code, useremail, password, confirmpassword } = req.body;
+
+
+        if (!code || !password || !confirmpassword)
+        {
+            return res.status(422).json({ error: "plz filled the field properly" });
+        }
+        const checkOtp = await OtpData.findOne({ code: code });
+        if (checkOtp)
+        {
+            const currTime = new Date().getTime();
+            const diff = checkOtp.expireIn - currTime;
+            if (diff < 0)
+            {
+                res.status(404).json({ error: "Token Expire" });
+            } else
+            {
+                const findEmail = await OtpData.findOne({ useremail: useremail })
+                if (findEmail)
+                {
+                    const resPass = new UserData({ password, confirmpassword });
+                    const storePass = await resPass.save();
+                }else
+                {
+                    res.status(201).json({message:"Password Change sucessfully"})
+                }
+
+            }
+        }
+
+    } catch (error)
+    {
+        send.status(500).error();
+    }
+})
 //------------------------------------------------------------------//
 //-------------------------------------------------------------------//
 
@@ -324,7 +474,7 @@ router.get("/mens", verifyToken, async (req, res) =>
         const verify = jwt.verify(req.token, process.env.SECRET_KEY);
         if (!verify)
         {
-            res.status.json({ error: "Not valide Token" });
+            res.status(404).json({ error: "Not valide Token" });
 
         } else
         {
@@ -333,7 +483,7 @@ router.get("/mens", verifyToken, async (req, res) =>
         }
     } catch (error)
     {
-        res.status(400).send(error);
+        res.status(403).send(error);
     }
 
 
@@ -371,7 +521,7 @@ router.get("/mens/:id", verifyToken, async (req, res) =>
         const verify = jwt.verify(req.token, process.env.SECRET_KEY);
         if (!verify)
         {
-            res.status.json({ error: "Not valide Token" });
+            res.status(404).json({ error: "Not valide Token" });
 
         } else
         {
@@ -381,7 +531,7 @@ router.get("/mens/:id", verifyToken, async (req, res) =>
         }
     } catch (error)
     {
-        res.status(400).send(error);
+        res.status(403).send(error);
     }
 });
 
@@ -417,7 +567,7 @@ router.post("/mens", verifyToken, async (req, res) =>
         const verify = jwt.verify(req.token, process.env.SECRET_KEY);
         if (!verify)
         {
-            res.status.json({ error: "Not valide Token" });
+            res.status(404).json({ error: "Not valide Token" });
 
         } else
         {
@@ -473,7 +623,7 @@ router.patch("/mens/:id", verifyToken, async (req, res) =>
         const verify = jwt.verify(req.token, process.env.SECRET_KEY);
         if (!verify)
         {
-            res.status.json({ error: "Not valide Token" });
+            res.status(404).json({ error: "Not valide Token" });
 
         } else
         {
@@ -519,7 +669,7 @@ router.delete("/mens/:id", verifyToken, async (req, res) =>
         const verify = jwt.verify(req.token, process.env.SECRET_KEY);
         if (!verify)
         {
-            res.status.json({ error: "Not valide Token" });
+            res.status(404).json({ error: "Not valide Token" });
 
         } else
         {
